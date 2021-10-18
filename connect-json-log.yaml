@@ -1,0 +1,33 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect-json-log
+  namespace: confluentcloud-dynamodb
+spec:
+  replicas: 1
+  image:
+    application: <account-id>.dkr.ecr.<region>.amazonaws.com/confluent-connect:jsonlog
+    init: confluentinc/cp-init-container-operator:6.1.0.0
+    pullPolicy: Always
+  podTemplate:
+    serviceAccountName: confluent-for-kubernetes
+    envVars:
+      - name: CLASSPATH
+        value: /usr/share/java/logback/*
+      - name: CLUSTER_NAME
+        value: "eu-west-1-plt-sandbox-1"
+      - name: AWS_SERVICE
+        value: "eks"
+  configOverrides:
+    jvm:
+      - "-Dlogback.configurationFile=/usr/share/configs/logback.xml"
+  dependencies:
+    kafka:
+      bootstrapEndpoint: <bootstrap-endpoint>
+      authentication:
+        type: plain
+        jaasConfig:
+          secretRef: cloudcredentials
+      tls:
+        enabled: true
+        ignoreTrustStoreConfig: true

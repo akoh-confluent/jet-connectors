@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+              <customFields>{"@Environment":"${CLUSTER_NAME}", "@Application":"${POD_NAME}", "@Feature":"${AWS_SERVICE}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="org.apache.kafka.connect.runtime.rest" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="org.reflections" level="ERROR" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</configuration>
